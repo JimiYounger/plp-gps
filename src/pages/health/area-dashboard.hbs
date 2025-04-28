@@ -1,0 +1,198 @@
+{{!-- src/pages/health/area-dashboard --}}
+
+{{!-- Loading Overlay (reusing from exec dashboard) --}}
+<div id="loadingOverlay" class="loading-overlay d-none">
+  <div class="spinner-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="mt-2 text-primary">Loading...</div>
+  </div>
+</div>
+
+<div id="dashboardContent" class="container-fluid py-4">
+  {{!-- Dashboard Header Section --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h2 mb-1">{{titleCase areaName}} Health Dashboard</h1>
+          <p class="text-muted mb-0">Team Health Overview</p>
+        </div>
+      </div>
+      
+      {{!-- Filters Section --}}
+      {{> health/filter-tabs 
+        selectedMonth=selectedMonth 
+        selectedRole=selectedRole 
+        availableMonths=availableMonths}}
+    </div>
+  </div>
+
+  {{!-- Response Rate Card --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title d-flex align-items-center mb-3">
+            <i class="bi bi-people-fill me-2"></i>
+            Team Response Rate
+          </h5>
+          <div class="d-flex align-items-center">
+            <div class="progress flex-grow-1 me-3" style="height: 10px;">
+              <div class="progress-bar {{#if (gte responseRate.completionRate 80)}}bg-success{{else if (gte responseRate.completionRate 50)}}bg-warning{{else}}bg-danger{{/if}}" 
+                   role="progressbar" 
+                   style="width: {{responseRate.completionRate}}%" 
+                   aria-valuenow="{{responseRate.completionRate}}" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100">
+              </div>
+            </div>
+            <div class="text-muted">
+              {{formatNumber responseRate.completed}}/{{formatNumber responseRate.total}}
+              ({{formatPercent responseRate.completionRate}})
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Scorecard Grid --}}
+  <div class="row mb-4">
+    {{#each metrics}}
+      <div class="col-md-6 col-lg-4 mb-4">
+        {{> health/area-scorecard 
+          metricName=@key
+          grade=this.grade
+          color=this.color
+          status=this.status
+          message=this.message
+          responses=this.responses}}
+      </div>
+    {{/each}}
+  </div>
+
+{{!-- Response Tables Section --}}
+<div class="row">
+  <div class="col-12">
+    {{> health/response-table 
+      fieldName="general" 
+      displayName="General Feedback"
+      responses=generalResponses}}
+    
+    {{> health/response-table 
+      fieldName="roadblocks" 
+      displayName="Are You Experiencing Any Roadblocks?"
+      responses=roadblocksResponses}}
+    
+    {{> health/response-table 
+      fieldName="leadership_support" 
+      displayName="How Can Your Leader Help You Overcome Your Roadblocks?"
+      responses=leadershipResponses}}
+  </div>
+</div>
+
+  {{!-- Summary Section (only if summary exists) --}}
+  {{#if summary}}
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-file-text me-2"></i>
+              AI Analysis Summary
+            </h5>
+          </div>
+          <div class="card-body">
+            {{{summary}}}
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</div>
+
+{{!-- Required Styles --}}
+<style>
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+  }
+
+  .spinner-container {
+    text-align: center;
+  }
+
+  .content-fading {
+    opacity: 0.5;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .card {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+  }
+
+  .grade-badge {
+    font-size: 2rem;
+    font-weight: bold;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+  }
+
+  .summary-content h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  }
+
+  .summary-content p {
+    color: #495057;
+    line-height: 1.6;
+  }
+
+  .summary-content ul {
+    padding-left: 1rem;
+  }
+
+  .summary-content li {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .summary-content li::before {
+    content: "•";
+    position: absolute;
+    left: -0.5rem;
+  }
+</style>
+
+{{!-- Required Scripts --}}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+  });
+</script>

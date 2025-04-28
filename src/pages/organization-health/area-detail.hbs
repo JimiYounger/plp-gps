@@ -1,0 +1,288 @@
+{{!-- src/pages/organization-health/area-detail.hbs --}}
+
+{{!-- Include the navigation partial for consistent navigation across pages --}}
+{{> organization-health/navigation areas=areas}}
+
+<div class="container-fluid py-4">
+  {{!-- Page Header with Breadcrumb Navigation --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/organization-health/dashboard" class="text-decoration-none">
+              <i class="bi bi-arrow-left me-1"></i>Dashboard
+            </a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">{{areaName}}</li>
+        </ol>
+      </nav>
+      <h1 class="display-4">{{areaName}} Area Insights</h1>
+      <p class="lead">Detailed analysis of employee satisfaction and engagement metrics</p>
+    </div>
+  </div>
+
+{{!-- Survey Completion Section --}}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            {{!-- Card Header with Toggle Button --}}
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <h2 class="h4 mb-0 me-2">Survey Completion Status</h2>
+                        <button class="btn btn-link p-0 text-decoration-none" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#surveyCompletionDetails" 
+                                aria-expanded="false" 
+                                aria-controls="surveyCompletionDetails">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="badge bg-primary">
+                        {{formatPercent completionStats.completionRate}}% Complete
+                    </div>
+                </div>
+                
+                {{!-- Progress Bar (Always Visible) --}}
+                <div class="mt-3">
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar bg-success" 
+                             role="progressbar" 
+                             style="width: {{completionStats.completionRate}}%" 
+                             aria-valuenow="{{completionStats.completionRate}}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{formatNumber completionStats.completed}} / {{formatNumber completionStats.total}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- Collapsible Content --}}
+            <div class="collapse" id="surveyCompletionDetails">
+                <div class="card-body">
+                    {{!-- Team Roster Table --}}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Team Member</th>
+                                    <th>Role</th>
+                                    <th class="text-center">Survey Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each roster}}
+                                    <tr>
+                                        <td>{{name}}</td>
+                                        <td>{{role}}</td>
+                                        <td class="text-center">
+                                            {{#if completedSurvey}}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>
+                                                    Completed
+                                                </span>
+                                            {{else}}
+                                                <span class="badge bg-warning">
+                                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                                    Pending
+                                                </span>
+                                            {{/if}}
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  {{!-- Area Metrics Overview Section --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h2 class="h4 mb-0">Key Metrics Overview</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            {{#each metrics}}
+              <div class="col-md-4 col-xl-3 mb-4">
+                {{!-- Use the metric-card partial for consistent metric display --}}
+                {{> organization-health/metric-card 
+                  metricName=@key 
+                  score=this.score 
+                  color=this.color 
+                  responses=this.responses 
+                  averageScore=this.averageScore
+                  status=this.status
+                }}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Detailed Analysis Section --}}
+  <div class="row">
+    {{!-- Engagement Analysis --}}
+    <div class="col-12 col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white">
+          <h2 class="h4 mb-0">Engagement Analysis</h2>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th class="text-center">Score</th>
+                  <th class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each metrics}}
+                  <tr>
+                    <td>{{@key}}</td>
+                    <td class="text-center" style="color: {{this.color}}">
+                      {{this.score}}
+                    </td>
+                    <td class="text-center">
+                      {{!-- Updated status thresholds to match NPS score ranges --}}
+                      {{#if (gte this.score 30)}}
+                        <span class="badge bg-success">Strong</span>
+                      {{else if (gte this.score 0)}}
+                        <span class="badge bg-warning">Moderate</span>
+                      {{else}}
+                        <span class="badge bg-danger">Needs Attention</span>
+                      {{/if}}
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Score Distribution Legend --}}
+    <div class="col-12 col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white">
+          <h2 class="h4 mb-0">Understanding NPS Scores</h2>
+        </div>
+        <div class="card-body">
+          {{!-- Include the NPS legend partial --}}
+          {{> organization-health/nps-legend}}
+          
+          <div class="mt-4">
+            <h3 class="h5">Score Interpretation</h3>
+            <p>NPS scores range from -100 to 100:</p>
+            {{!-- Updated score interpretation to match our new thresholds --}}
+            <ul class="list-unstyled">
+              <li><i class="bi bi-check-circle-fill text-success me-2"></i>Above 30: Strong</li>
+              <li><i class="bi bi-dash-circle text-warning me-2"></i>0 to 30: Moderate</li>
+              <li><i class="bi bi-x-circle text-danger me-2"></i>Below 0: Needs Attention</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{{!-- Action Items and Recommendations --}}
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white">
+        <h2 class="h4 mb-0">Recommended Focus Areas</h2>
+      </div>
+      <div class="card-body">
+        {{!-- Display metrics that need attention (negative scores) --}}
+        {{#each metrics}}
+          {{#if (lt this.score 0)}}
+            <div class="alert alert-danger">
+              <h4 class="h5">{{@key}} needs attention</h4>
+              <p class="mb-0">
+                Current NPS score is {{this.score}} based on {{this.responses}} responses.
+                Consider reviewing feedback and implementing improvement strategies.
+              </p>
+            </div>
+          {{/if}}
+        {{/each}}
+
+        {{!-- Display metrics that could be improved (0-29 scores) --}}
+        {{#each metrics}}
+          {{#if (and (gte this.score 0) (lt this.score 30))}}
+            <div class="alert alert-warning">
+              <h4 class="h5">{{@key}} has room for improvement</h4>
+              <p class="mb-0">
+                Current NPS score is {{this.score}} based on {{this.responses}} responses.
+                While positive, there's opportunity to strengthen this metric further.
+              </p>
+            </div>
+          {{/if}}
+        {{/each}}
+
+        {{!-- Show success message only if ALL metrics are strong (>=30) --}}
+        {{#if (every metrics (gte "score" 30))}}
+          <div class="alert alert-success">
+            <h4 class="h5">Strong Performance</h4>
+            <p class="mb-0">
+              All metrics for {{areaName}} are showing strong positive sentiment. 
+              Continue maintaining these excellent strategies while looking for opportunities 
+              to sustain this high performance.
+            </p>
+          </div>
+        {{/if}}
+
+        {{!-- If no alerts were shown, provide a neutral summary --}}
+        {{#unless (or (some metrics (lt "score" 0)) 
+                     (some metrics (and (gte "score" 0) (lt "score" 30))) 
+                     (every metrics (gte "score" 30)))}}
+          <div class="alert alert-info">
+            <h4 class="h5">Performance Overview</h4>
+            <p class="mb-0">
+              Review the metrics above for detailed insights into each area's performance.
+            </p>
+          </div>
+        {{/unless}}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Bootstrap-specific JavaScript --}}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    // Handle collapse icon rotation
+    const surveyCompletionDetails = document.getElementById('surveyCompletionDetails');
+    const toggleButton = document.querySelector('[data-bs-target="#surveyCompletionDetails"]');
+    const toggleIcon = toggleButton.querySelector('i');
+
+    surveyCompletionDetails.addEventListener('show.bs.collapse', function () {
+      toggleIcon.classList.remove('bi-chevron-down');
+      toggleIcon.classList.add('bi-chevron-up');
+    });
+
+    surveyCompletionDetails.addEventListener('hide.bs.collapse', function () {
+      toggleIcon.classList.remove('bi-chevron-up');
+      toggleIcon.classList.add('bi-chevron-down');
+    });
+  });
+</script>

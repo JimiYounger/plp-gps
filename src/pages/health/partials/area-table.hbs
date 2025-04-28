@@ -1,0 +1,132 @@
+{{!-- src/pages/health/partials/area-table.hbs --}}
+<div class="card border-0 shadow-sm">
+  <div class="card-header bg-white border-0">
+    <h5 class="card-title mb-0">Area Breakdown</h5>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        {{!-- Table Header --}}
+        <thead class="bg-light">
+          <tr>
+            {{!-- Area Column Header --}}
+            <th class="border-0 ps-4">Area</th>
+            
+            {{!-- Response Rate Header --}}
+            <th class="border-0 text-center">Response Rate</th>
+            
+            {{!-- Metric Headers with Info Icons --}}
+            <th class="border-0 text-center">
+              Career Growth
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="I am making the money I need for this to be a long term opportunity"></i>
+            </th>
+            <th class="border-0 text-center">
+              Training
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="I am receiving the training I need"></i>
+            </th>
+            <th class="border-0 text-center">
+              Support
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="I am receiving the support I need"></i>
+            </th>
+            <th class="border-0 text-center">
+              Pay Accuracy
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="I have an understanding of how I'm payed"></i>
+            </th>
+            <th class="border-0 text-center">
+              Company Endorsement
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="I would recommend working at Purelight to friends and Family"></i>
+            </th>
+            <th class="border-0 text-center">
+              Opportunity
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="I see opportunities for growth here at Purelight"></i>
+            </th>
+            <th class="border-0 text-center">
+              Energy
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="How is your energy level at the beginning and end of the day?"></i>
+            </th>
+            <th class="border-0 text-center">
+              Development
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="Rate how you are currently doing with your personal & professional development"></i>
+            </th>
+            <th class="border-0 text-center">
+              Financial Goals
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="How are you doing towards your financial goals?"></i>
+            </th>
+            <th class="border-0 text-center">
+              Personal Performance
+              <i class="bi bi-info-circle-fill ms-1 small text-muted" 
+                 data-bs-toggle="tooltip" 
+                 title="Rate your professional performance"></i>
+            </th>
+          </tr>
+        </thead>
+        
+        {{!-- Table Body --}}
+        <tbody>
+          {{#each areaMetrics as |areaData areaName|}}
+            <tr>
+              {{!-- Area Name Column --}}
+              <td class="ps-4">
+                <a href="/health/area-dashboard/{{areaName}}" 
+                   class="text-decoration-none text-dark d-flex align-items-center">
+                  {{areaName}}
+                  <i class="bi bi-chevron-right ms-2 small"></i>
+                </a>
+              </td>
+
+              {{!-- Response Rate Column --}}
+              <td class="text-center" style="min-width: 150px;">
+                {{#with areaData.responseRate}}
+                  <div class="d-flex align-items-center">
+                    <div class="progress flex-grow-1 mx-2" style="height: 4px;">
+                      <div class="progress-bar {{#if (gte completionRate 80)}}bg-success{{else if (gte completionRate 50)}}bg-warning{{else}}bg-danger{{/if}}"
+                           role="progressbar" 
+                           style="width: {{completionRate}}%" 
+                           aria-valuenow="{{completionRate}}" 
+                           aria-valuemin="0" 
+                           aria-valuemax="100">
+                      </div>
+                    </div>
+                    <span class="text-muted small">
+                      {{formatNumber completionRate 1}}%
+                    </span>
+                  </div>
+                {{/with}}
+              </td>
+
+              {{!-- Metric Value Columns --}}
+              <td class="text-center">{{#with (lookup areaData.metrics 'Career Growth')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Training')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Support')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Pay Accuracy')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Company Endorsement')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Opportunity')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Energy')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Development')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Financial Goals')}}{{{formatMetricBadge this}}}{{/with}}</td>
+              <td class="text-center">{{#with (lookup areaData.metrics 'Personal Performance')}}{{{formatMetricBadge this}}}{{/with}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

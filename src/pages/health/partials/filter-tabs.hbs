@@ -1,0 +1,61 @@
+{{!-- Filter Tabs Partial --}}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <div class="row align-items-center">
+      {{!-- Month Selection --}}
+      <div class="col-md-6 mb-3 mb-md-0">
+        <label class="form-label">Select Month</label>
+        <select class="form-select" id="monthSelect" onchange="updateFilters()">
+          {{#each availableMonths}}
+            <option value="{{this}}" {{#if (eq this ../selectedMonth)}}selected{{/if}}>
+              {{formatDate this "MMMM YYYY"}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+      {{!-- Role Type Tabs --}}
+      <div class="col-md-6">
+        <label class="form-label">Select Role</label>
+        <div class="btn-group w-100" role="group">
+          {{#each (array "Setter" "Closer" "Manager" "All")}}
+            <input type="radio" 
+                   class="btn-check" 
+                   name="roleType" 
+                   id="role{{this}}" 
+                   value="{{this}}"
+                   {{#if (eq this ../selectedRole)}}checked{{/if}}
+                   onchange="updateFilters()">
+            <label class="btn btn-outline-primary" for="role{{this}}">
+              {{this}}
+            </label>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateFilters() {
+  const month = document.getElementById('monthSelect').value;
+  const role = document.querySelector('input[name="roleType"]:checked').value;
+  
+  // Determine which dashboard we're on
+  const currentPath = window.location.pathname;
+  
+  // Build the appropriate URL based on the current dashboard
+  let newUrl;
+  if (currentPath.includes('exec-dashboard')) {
+    // Executive dashboard route - include /health prefix
+    newUrl = `/health/exec-dashboard?month=${month}&role=${role}`;
+  } else {
+    // Area dashboard route
+    const pathParts = currentPath.split('/');
+    const areaName = pathParts[pathParts.length - 1];
+    newUrl = `/health/area-dashboard/${areaName}?month=${month}&role=${role}`;
+  }
+  
+  // Navigate to the new URL
+  window.location.href = newUrl;
+}
+</script>

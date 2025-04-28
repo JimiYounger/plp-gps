@@ -1,0 +1,56 @@
+{{!-- src/pages/organization-health/partials/navigation.hbs --}}
+{{!-- 
+  Navigation Partial
+  Expected context:
+  - areas: Array of area names for the dropdown
+  - currentArea (optional): Currently selected area name
+--}}
+
+
+{{!-- src/pages/organization-health/partials/metric-card.hbs --}}
+{{!--
+  Metric Card Partial
+  Expected context:
+  - metricName: Name of the metric
+  - score: NPS score (-100 to 100)
+  - color: Color code for the score
+  - responses: Number of responses
+  - averageScore: Average raw score (0-10)
+--}}
+
+
+{{!-- src/pages/organization-health/partials/nps-legend.hbs --}}
+{{!--
+  NPS Legend Partial
+  No expected context - this partial is self-contained
+--}}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h3 class="h5 mb-3">Understanding NPS Scores</h3>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="d-flex gap-4 mb-3">
+          <div>
+            <span class="badge p-2" style="background-color: #93c47d">9-10</span>
+            <span class="ms-2">Promoters</span>
+          </div>
+          <div>
+            <span class="badge p-2" style="background-color: #ffd966">7-8</span>
+            <span class="ms-2">Passives</span>
+          </div>
+          <div>
+            <span class="badge p-2" style="background-color: #ff4d4d">0-6</span>
+            <span class="ms-2">Detractors</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <small class="text-muted">
+          NPS = % Promoters - % Detractors
+          <br>
+          Scores range from -100 to +100
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
