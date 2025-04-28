@@ -45,8 +45,34 @@ function hasAreaAccess(request, reply, done) {
   done();
 }
 
+// Check for region access
+function hasRegionAccess(request, reply, done) {
+  const { regionName } = request.params;
+  
+  // Executive access allows viewing any region
+  if (ROLES.EXECUTIVE.includes(request.user.role)) {
+    return done();
+  }
+  
+  // Check for RD role and assigned region
+  const hasAccess = 
+    request.user.role === 'RD' && 
+    request.user.region === regionName && 
+    request.user.fields?.['Health Dashboard'] === true;
+  
+  if (!hasAccess) {
+    return reply.code(403).view('error', {
+      message: 'Access denied. You do not have permission to view this region.',
+      user: request.user
+    });
+  }
+  
+  done();
+}
+
 module.exports = {
   isAuthenticated,
   hasExecAccess,
-  hasAreaAccess
+  hasAreaAccess,
+  hasRegionAccess
 };

@@ -48,6 +48,11 @@ function updateFilters() {
   if (currentPath.includes('exec-dashboard')) {
     // Executive dashboard route - include /health prefix
     newUrl = `/health/exec-dashboard?month=${month}&role=${role}`;
+  } else if (currentPath.includes('regional-dashboard')) {
+    // Regional dashboard route
+    const pathParts = currentPath.split('/');
+    const regionName = pathParts[pathParts.length - 1];
+    newUrl = `/health/regional-dashboard/${regionName}?month=${month}&role=${role}`;
   } else {
     // Area dashboard route
     const pathParts = currentPath.split('/');

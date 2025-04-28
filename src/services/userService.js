@@ -33,6 +33,7 @@ async function findUserInAirtable(email) {
             name: userData.Name,
             role: userData.Role,
             area: userData.Area,
+            region: userData.Region,
             isActive: userData.Role !== 'TERM',
             fields: {
                 'Health Dashboard': userData['Health Dashboard']
@@ -81,8 +82,34 @@ function hasAreaAccess(user, areaName) {
     return false;
 }
 
+/**
+ * Checks if a user has access to a specific region. This implements our access control
+ * logic where executives can access all regions, but Regional Directors can only access
+ * their assigned region.
+ * 
+ * @param {Object} user - The user object containing role and region properties
+ * @param {string} regionName - The region to check access for
+ * @returns {boolean} True if user has access to the region
+ */
+function hasRegionAccess(user, regionName) {
+    // Executives have universal access to all regions
+    if (ROLES.EXECUTIVE.includes(user.role)) {
+        return true;
+    }
+    
+    // Regional Directors can only access their assigned region
+    if (user.role === 'RD') {
+        return user.region === regionName && 
+          user.fields?.['Health Dashboard'] === true;
+    }
+    
+    // Default to no access for any other role
+    return false;
+}
+
 module.exports = {
     findUserInAirtable,
     hasExecutiveAccess,
-    hasAreaAccess
+    hasAreaAccess,
+    hasRegionAccess
 };

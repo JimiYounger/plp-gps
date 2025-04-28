@@ -134,6 +134,15 @@
                             </li>
                         {{/if}}
                         
+                        {{#if (eq user.role 'RD')}}
+                            <li class="nav-item">
+                                <a class="nav-link {{#if (isActiveRoute currentPath (concat '/health/regional-dashboard/' user.region))}}active{{/if}}"
+                                   href="/health/regional-dashboard/{{user.region}}">
+                                   {{user.region}} Regional Dashboard
+                                </a>
+                            </li>
+                        {{/if}}
+                        
                         {{#if (isExecutive user.role)}}
                             <li class="nav-item">
                                 <a class="nav-link {{#if (isActiveRoute currentPath '/exec-dashboard')}}active{{/if}}"

@@ -1,0 +1,139 @@
+{{!-- src/pages/health/regional-dashboard.hbs --}}
+<div class="container-fluid mt-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="mb-3">Regional Dashboard: {{regionName}}</h1>
+      <p class="lead">Aggregated metrics across {{areasCount.withData}} areas in this region</p>
+    </div>
+  </div>
+
+  {{!-- Filter Controls --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      {{> health/filter-tabs 
+        availableMonths=availableMonths 
+        selectedMonth=selectedMonth 
+        selectedRole=selectedRole 
+        entityType="region"
+        entityName=regionName
+      }}
+    </div>
+  </div>
+
+  {{!-- Response Rate Card --}}
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Region Response Rate</h5>
+        </div>
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center mb-3">
+                <div class="progress flex-grow-1 me-3" style="height: 10px;">
+                  <div class="progress-bar bg-primary" role="progressbar" 
+                       style="width: {{responseRate.completionRate}}%;" 
+                       aria-valuenow="{{responseRate.completionRate}}" 
+                       aria-valuemin="0" 
+                       aria-valuemax="100"></div>
+                </div>
+                <span class="fw-bold">{{responseRate.completionRate}}%</span>
+              </div>
+              <p class="mb-0">
+                <span class="text-muted">Responses:</span> 
+                <span class="fw-bold">{{responseRate.completed}}/{{responseRate.total}}</span>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-0">
+                <span class="text-muted">Areas with Data:</span> 
+                <span class="fw-bold">{{areasCount.withData}}/{{areasCount.total}}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Metrics Overview --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Region Metrics Overview</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            {{#each metrics}}
+              <div class="col-md-4 col-lg-3 mb-4">
+                {{> health/metric-card 
+                  title=@key 
+                  nps=this.nps 
+                  status=this.status 
+                  color=this.color 
+                  promoters=this.promoters 
+                  passives=this.passives 
+                  detractors=this.detractors 
+                  responses=this.responses
+                }}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Areas Response Rate Table --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Area Response Rates</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Responses</th>
+                  <th>Completion Rate</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each responseRates}}
+                  <tr>
+                    <td>{{@key}}</td>
+                    <td>{{this.completed}}/{{this.total}}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                          <div class="progress-bar bg-primary" role="progressbar" 
+                               style="width: {{this.completionRate}}%;" 
+                               aria-valuenow="{{this.completionRate}}" 
+                               aria-valuemin="0" 
+                               aria-valuemax="100"></div>
+                        </div>
+                        <span>{{this.completionRate}}%</span>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="/health/area-dashboard/{{@key}}?month={{../selectedMonth}}&role={{../selectedRole}}" 
+                         class="btn btn-sm btn-outline-primary">
+                        View Area
+                      </a>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

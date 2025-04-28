@@ -6,6 +6,7 @@ const { registerHelpers } = require('./src/helpers/handlebarHelpers');
 const aiRoutes = require('./src/routes/aiRoutes.js');
 const executiveDashboardRoutes = require('./src/routes/executive-dashboard-routes');
 const areaDashboardRoutes = require('./src/routes/area-dashboard-routes');
+const regionalDashboardRoutes = require('./src/routes/regional-dashboard-routes');
 const userService = require('./src/services/userService');  // Add this line
 
 
@@ -165,6 +166,7 @@ async function startServer() {
     fastify.register(require('./src/routes/aiRoutes'), { prefix: '/api/ai' });
     fastify.register(executiveDashboardRoutes, { prefix: '/health' });
     fastify.register(areaDashboardRoutes);
+    fastify.register(regionalDashboardRoutes);
 
     // Basic home page route
     fastify.get("/", function (request, reply) {

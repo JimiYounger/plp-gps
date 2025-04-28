@@ -90,7 +90,10 @@ async function routes(fastify, options) {
       
       // Direct users to appropriate dashboard based on role
       if (request.user && request.user.role) {
-        if (ROLES.AREA_MANAGER.includes(request.user.role)) {
+        if (request.user.role === 'RD' && request.user.region) {
+          return reply.redirect(`/health/regional-dashboard/${encodeURIComponent(request.user.region)}`);
+        }
+        if (ROLES.AREA_MANAGER.includes(request.user.role) && request.user.role !== 'RD') {
           return reply.redirect(`/health/area-dashboard/${encodeURIComponent(request.user.area)}`);
         }
         if (ROLES.EXECUTIVE.includes(request.user.role)) {
