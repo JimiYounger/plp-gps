@@ -1,0 +1,32 @@
+{{!-- src/pages/organization-health/partials/metric-card.hbs --}}
+<div class="card h-100 shadow-sm">
+  <div class="card-body">
+    {{#if metricName}}
+    <h3 class="h5 mb-3" {{{getTooltipAttributes metricName}}}>
+      {{metricName}}
+      <i class="bi bi-info-circle-fill ms-1 small text-muted"></i>
+    </h3>
+    {{else}}
+    <h3 class="h5 mb-3">{{@key}}</h3>
+    {{/if}}
+    <div class="row align-items-center">
+      <div class="col text-center">
+        <div class="display-4 mb-2" style="color: {{color}}">
+          {{score}}
+        </div>
+        <div class="text-muted">NPS Score</div>
+      </div>
+      <div class="col text-center">
+        <div class="h2 mb-2">
+          {{averageScore}}
+        </div>
+        <div class="text-muted">Avg Rating</div>
+      </div>
+    </div>
+    <div class="text-center mt-3">
+      <small class="text-muted">
+        Based on {{formatNumber responses}} responses
+      </small>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLP GPS - Goals, Planning, Support</title>
+    
+    {{!-- Essential styling resources --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        /* Base styling for improved readability and aesthetics */
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Enhanced navigation styling */
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            padding: 1rem;
+        }
+
+        .navbar-text {
+            color: rgba(255,255,255,.8) !important;
+        }
+
+        /* Main content area styling */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+        
+        /* Card enhancements */
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        }
+        
+        /* Navigation improvements */
+        .navbar-nav .nav-link.active {
+            font-weight: 500;
+            color: #fff !important;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #fff;
+        }
+
+        /* Button styling */
+        .btn-outline-light {
+            border-width: 2px;
+        }
+
+        .btn-outline-light:hover {
+            background-color: rgba(255,255,255,.1);
+        }
+
+        /* Footer positioning */
+        .footer {
+            margin-top: auto;
+            padding: 1rem 0;
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        /* Responsive design adjustments */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                padding: 1rem 0;
+            }
+            
+            .nav-item {
+                margin: 0.5rem 0;
+            }
+
+            .navbar-text {
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    {{!-- Main Navigation --}}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            {{!-- Brand and Logo --}}
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-lightbulb me-2"></i>
+                PLP GPS
+            </a>
+
+            {{!-- Current Section Indicator --}}
+            <span class="navbar-text text-light d-none d-md-inline mx-3">
+                {{#if user}}
+                    {{getNavLabel user}}
+                {{/if}}
+            </span>
+            
+            {{!-- Mobile Navigation Toggle --}}
+            <button class="navbar-toggler" type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {{!-- Navigation Items --}}
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    {{#if user}}
+                        {{!-- Role-based Navigation --}}
+                        {{#if (isAreaManager user.role)}}
+                            <li class="nav-item">
+                                <a class="nav-link {{#if (isActiveRoute currentPath (getDashboardUrl user))}}active{{/if}}"
+                                   href="/health/area-dashboard/{{user.area}}">
+                                   {{user.area}} Dashboard
+                                </a>
+                            </li>
+                        {{/if}}
+                        
+                        {{#if (isExecutive user.role)}}
+                            <li class="nav-item">
+                                <a class="nav-link {{#if (isActiveRoute currentPath '/exec-dashboard')}}active{{/if}}"
+                                   href="/exec-dashboard">
+                                   Executive Dashboard
+                                </a>
+                            </li>
+                        {{/if}}
+                        
+                        {{!-- User Information and Logout --}}
+                        <li class="nav-item mx-3">
+                            <span class="text-light">Welcome, {{user.name}}</span>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+                        </li>
+                    {{else}}
+                        <li class="nav-item">
+                            <a href="/login" class="btn btn-outline-light btn-sm">Login</a>
+                        </li>
+                    {{/if}}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {{!-- Main Content Area --}}
+    <main class="main-content">
+        <div class="container">
+            {{{body}}}
+        </div>
+    </main>
+
+    {{!-- Footer --}}
+    <footer class="footer">
+        <div class="container text-center">
+            <span>PLP GPS: Goals, Planning, Support © {{currentYear}}</span>
+        </div>
+    </footer>
+
+    {{!-- Essential Scripts --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {{!-- Component Initialization --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap components
+            var tooltipList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                .map(el => new bootstrap.Tooltip(el));
+            
+            var popoverList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+                .map(el => new bootstrap.Popover(el));
+        });
+    </script>
+</body>
+</html>

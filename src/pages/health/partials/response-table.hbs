@@ -1,0 +1,48 @@
+{{!-- views/partials/health/response-table.hbs --}}
+<div class="response-section mb-4">
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0">
+      <button class="btn btn-link text-decoration-none p-0 w-100 d-flex justify-content-between align-items-center" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#{{fieldName}}Responses" 
+              aria-expanded="false" 
+              aria-controls="{{fieldName}}Responses">
+        <span class="fw-bold">
+          <i class="bi bi-chat-right-text me-2"></i>
+          {{displayName}}
+        </span>
+        <i class="bi bi-chevron-down"></i>
+      </button>
+    </div>
+    
+    <div class="collapse" id="{{fieldName}}Responses">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="px-4">Response</th>
+                <th scope="col" class="px-4">Role</th>
+                <th scope="col" class="px-4">Area</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each responses}}
+                <tr>
+                  <td class="px-4">{{this.response}}</td>
+                  <td class="px-4">{{this.role_type}}</td>
+                  <td class="px-4">{{this.area_name}}</td>
+                </tr>
+              {{else}}
+                <tr>
+                  <td colspan="3" class="text-center py-4">No responses available</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

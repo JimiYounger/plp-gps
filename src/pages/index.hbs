@@ -1,0 +1,51 @@
+<div class="row justify-content-center align-items-center min-vh-75">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body text-center p-5">
+                <h1 class="mb-4">Welcome to PLP GPS</h1>
+                
+                {{#if user}}
+                    <p class="lead mb-4">
+                        Hello {{user.name}}, you're logged in as a {{titleCase user.role}}
+                        {{#if (isAreaManager user.role)}}
+                            for the {{user.area}} area.
+                        {{else}}
+                            .
+                        {{/if}}
+                    </p>
+
+                    <div class="d-grid gap-3 col-md-8 mx-auto">
+                        {{#if (isAreaManager user.role)}}
+                            <a href="/health/area-dashboard/{{user.area}}" 
+                               class="btn btn-primary btn-lg">
+                                <i class="bi bi-graph-up me-2"></i>
+                                Go to {{user.area}} Dashboard
+                            </a>
+                        {{/if}}
+                        
+                        {{#if (isExecutive user.role)}}
+                            <a href="/health/exec-dashboard" 
+                               class="btn btn-primary btn-lg">
+                                <i class="bi bi-graph-up me-2"></i>
+                                Go to Executive Dashboard
+                            </a>
+                        {{/if}}
+                        
+                        <a href="/team" class="btn btn-outline-secondary">
+                            <i class="bi bi-people me-2"></i>
+                            View Team Members
+                        </a>
+                    </div>
+                {{else}}
+                    <p class="lead mb-4">
+                        Please log in to access the Learning Management System.
+                    </p>
+                    <a href="/login" class="btn btn-primary btn-lg">
+                        <i class="bi bi-google me-2"></i>
+                        Sign in with Google
+                    </a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

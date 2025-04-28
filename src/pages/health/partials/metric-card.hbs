@@ -1,0 +1,63 @@
+{{!-- Metric Card Partial --}}
+<div class="card h-100 border-0 shadow-sm">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <h3 class="h5 mb-0" {{{getTooltipAttributes metricName}}}>
+        {{metricName}}
+        <i class="bi bi-info-circle-fill ms-1 small text-muted"></i>
+      </h3>
+      <span class="badge rounded-pill" style="background-color: {{color}}">{{status}}</span>
+    </div>
+    
+    {{!-- NPS Score --}}
+    <div class="d-flex align-items-baseline mb-3">
+      <h2 class="display-4 mb-0 me-2" style="color: {{color}}">{{nps}}</h2>
+      <span class="text-muted">NPS</span>
+    </div>
+
+    {{!-- Average Score --}}
+    <div class="mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="text-muted small">Average Rating</span>
+        <span class="fw-bold">{{avg}}/10</span>
+      </div>
+      <div class="progress" style="height: 6px;">
+        <div class="progress-bar" 
+             role="progressbar" 
+             style="width: {{multiply avg 10}}%; background-color: {{color}}" 
+             aria-valuenow="{{avg}}" 
+             aria-valuemin="0" 
+             aria-valuemax="10">
+        </div>
+      </div>
+    </div>
+
+    {{!-- Response Distribution --}}
+    <div class="mt-3">
+      <div class="d-flex justify-content-between mb-2">
+        <small class="text-muted">Response Distribution</small>
+        <small class="text-muted">{{responses}} responses</small>
+      </div>
+      <div class="d-flex gap-1" style="height: 24px;">
+        {{!-- Promoters --}}
+        <div class="flex-grow-1 bg-success" 
+             style="width: {{percentage promoters responses}}%"
+             data-bs-toggle="tooltip"
+             title="{{promoters}} Promoters ({{percentage promoters responses}}%)">
+        </div>
+        {{!-- Passives --}}
+        <div class="flex-grow-1 bg-warning" 
+             style="width: {{percentage passives responses}}%"
+             data-bs-toggle="tooltip"
+             title="{{passives}} Passives ({{percentage passives responses}}%)">
+        </div>
+        {{!-- Detractors --}}
+        <div class="flex-grow-1 bg-danger" 
+             style="width: {{percentage detractors responses}}%"
+             data-bs-toggle="tooltip"
+             title="{{detractors}} Detractors ({{percentage detractors responses}}%)">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
