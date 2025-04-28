@@ -10,15 +10,26 @@ class RegionalDashboardService {
     try {
       console.log('Fetching areas for region:', regionName);
       
-      const { data, error } = await supabase
-        .from('areas')
-        .select('area_name')
-        .eq('region', regionName)
-        .order('area_name');
-
-      if (error) throw error;
+      // Import Airtable base here to avoid circular dependencies
+      const base = require('../config/airtable');
       
-      return data.map(area => area.area_name);
+      // Query Airtable to find all team members in this region
+      const records = await base('Team Members').select({
+        filterByFormula: `{Region} = '${regionName}'`,
+        fields: ['Area']
+      }).all();
+      
+      console.log(`Found ${records.length} team members in region ${regionName}`);
+      
+      // Extract unique areas from the team members
+      const areas = [...new Set(records
+        .map(record => record.get('Area'))
+        .filter(area => area)) // Remove any undefined/null areas
+      ];
+      
+      console.log(`Found ${areas.length} unique areas in region ${regionName}: ${areas.join(', ')}`);
+      
+      return areas;
     } catch (error) {
       console.error('Error fetching areas in region:', error);
       throw error;
@@ -153,10 +164,18 @@ class RegionalDashboardService {
     metricFields.forEach(field => {
       const metric = aggregatedMetrics[field];
       const total = metric.promoters + metric.passives + metric.detractors;
-      const nps = total > 0 ? ((metric.promoters - metric.detractors) / total) * 100 : 0;
-      const avg = metric.responses > 0 ? metric.sum / metric.responses : 0;
+      // Round NPS to whole number for cleaner display
+      const nps = total > 0 ? Math.round(((metric.promoters - metric.detractors) / total) * 100) : 0;
+      // Round average to one decimal place
+      const avg = metric.responses > 0 ? Number((metric.sum / metric.responses).toFixed(1)) : 0;
       
-      finalMetrics[this._formatMetricName(field)] = {
+      // Get the formatted metric name
+      const formattedName = this._formatMetricName(field);
+      
+      // Store metrics with the formatted name as the key
+      finalMetrics[formattedName] = {
+        name: formattedName, // Add explicitly for debugging
+        key: formattedName,  // Add explicitly for debugging
         nps,
         avg,
         promoters: metric.promoters,
@@ -177,7 +196,7 @@ class RegionalDashboardService {
       metrics: finalMetrics,
       responseRate: {
         ...responseRateTotals,
-        completionRate
+        completionRate: Math.round(completionRate)
       },
       areasCount: {
         total: allAreas.length,
@@ -256,9 +275,21 @@ class RegionalDashboardService {
       }
       
       // Fetch data for all areas in the region
+      // Include all the role-specific fields we need
       const { data, error } = await supabase
         .from('area_monthly_summary')
-        .select('area_name, month_date, total_headcount, total_responses')
+        .select(`
+          area_name, 
+          month_date, 
+          total_headcount, 
+          total_responses,
+          setter_headcount,
+          setter_responses,
+          closer_headcount,
+          closer_responses,
+          manager_headcount,
+          manager_responses
+        `)
         .in('area_name', areas)
         .eq('month_date', monthDate);
 
@@ -270,7 +301,18 @@ class RegionalDashboardService {
         
         const { data: latestData, error: latestError } = await supabase
           .from('area_monthly_summary')
-          .select('area_name, month_date, total_headcount, total_responses')
+          .select(`
+            area_name, 
+            month_date, 
+            total_headcount, 
+            total_responses,
+            setter_headcount,
+            setter_responses,
+            closer_headcount,
+            closer_responses,
+            manager_headcount,
+            manager_responses
+          `)
           .in('area_name', areas)
           .eq('month_date', mostRecentMonth);
           
@@ -300,7 +342,7 @@ class RegionalDashboardService {
         responseRates[area.area_name] = {
           total,
           completed,
-          completionRate
+          completionRate: Math.round(completionRate)
         };
       });
       

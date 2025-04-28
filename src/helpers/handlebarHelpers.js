@@ -98,6 +98,11 @@ const formatHelpers = {
   multiply: function(a, b) {
     return a * b;
   },
+  concat: function() {
+    // Remove the Handlebars options object which is always the last argument
+    const args = Array.prototype.slice.call(arguments, 0, -1);
+    return args.join('');
+  },
   formatDate: function(date, format) {
     if (!date) return '';
     const d = new Date(date);

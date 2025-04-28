@@ -51,7 +51,15 @@ async function regionalDashboardRoutes(fastify, options) {
       const areasInRegion = await regionalDashboardService.getAreasInRegion(regionName);
       
       if (!areasInRegion || areasInRegion.length === 0) {
-        throw new Error(`No areas found for region: ${regionName}`);
+        console.log(`No areas found for region: ${regionName}`);
+        
+        // Return a more user-friendly error page
+        return reply.view('error', {
+          message: `No areas found for region: ${regionName}`,
+          details: 'There are no team members with areas assigned to this region in our records.',
+          user: request.user,
+          layout: 'default'
+        });
       }
       
       console.log(`Found ${areasInRegion.length} areas in region ${regionName}`);
@@ -78,6 +86,9 @@ async function regionalDashboardRoutes(fastify, options) {
           filteredMetrics[key] = value;
         }
       });
+      
+      console.log('Metrics being passed to template:', Object.keys(filteredMetrics));
+      console.log('Sample metric:', Object.keys(filteredMetrics)[0], JSON.stringify(filteredMetrics[Object.keys(filteredMetrics)[0]], null, 2));
       
       // Render the regional dashboard template with all required data
       return reply.view('health/regional-dashboard', {
